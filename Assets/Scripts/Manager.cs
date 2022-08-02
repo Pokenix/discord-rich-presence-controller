@@ -1,20 +1,21 @@
 using Discord;
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System;
 
 public class Manager : MonoBehaviour
 {
     // Discord Rich Presence Controller
     // Made by Pokenix
-    // https://www.pokenix.com/discord-rich-presence-controller.html
+    // https://www.pokenix.com/discord-rich-presence-controller
     // https://www.discord.gg/STcThtu
 
     public DiscordController discordController;
 
     public GameObject info;
     public GameObject main;
+    public GameObject button_connect;
     public GameObject menu;
     public GameObject menu_basic;
     public GameObject menu_images;
@@ -73,15 +74,15 @@ public class Manager : MonoBehaviour
 
     public void Connect()
     {
-        if (id.GetComponent<TMP_InputField>().text.Length == 18)
+        if (id.GetComponent<TMP_InputField>().text.Length > 0)
         {
             discordController.Connect(long.Parse(id.GetComponent<TMP_InputField>().text));
         }
     }
 
-    public void Disconnect()
+    public void Clear()
     {
-        discordController.Disconnect();
+        discordController.Clear();
     }
 
     public void UpdateActivity()

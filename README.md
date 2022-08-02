@@ -6,11 +6,11 @@
 DRPC (Discord Rich Presence Controller) is a tool that you can use to change your Rich Presence on Discord.
 
 ### Links
+* [Website](https://www.pokenix.com/discord-rich-presence-controller)
+* [Support Server](https://www.discord.gg/STcThtu)
 * [Pokenix](https://www.pokenix.com)
 * [Unity](https://unity.com)
 * [Discord](https://discord.com)
-* [Website](https://www.pokenix.com/discord-rich-presence-controller.html)
-* [Support Server](https://www.discord.gg/STcThtu)
 
 ### Coming Soon
 1. Profiles

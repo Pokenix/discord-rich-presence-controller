@@ -1,25 +1,27 @@
 using Discord;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DiscordController : MonoBehaviour
 {
     // Discord Rich Presence Controller
     // Made by Pokenix
-    // https://www.pokenix.com/discord-rich-presence-controller.html
+    // https://www.pokenix.com/discord-rich-presence-controller
     // https://www.discord.gg/STcThtu
+
+    public Manager manager;
 
     public Discord.Discord discord;
     public bool connected;
 
     public void Connect(long id)
     {
-        if (connected)
+        if (!connected)
         {
-            discord.Dispose();
-            connected = false;
+            discord = new Discord.Discord(id, (ulong)CreateFlags.NoRequireDiscord);
+            connected = true;
+            manager.button_connect.GetComponent<Button>().interactable = false;
         }
-        discord = new Discord.Discord(id, (ulong)CreateFlags.Default);
-        connected = true;
     }
 
     public void Disconnect()
@@ -27,6 +29,21 @@ public class DiscordController : MonoBehaviour
         if (connected)
         {
             discord.Dispose();
+        }
+    }
+
+    public void Clear()
+    {
+        if (connected)
+        {
+            var activityManager = discord.GetActivityManager();
+            activityManager.ClearActivity((res) =>
+            {
+                if (res != Result.Ok)
+                {
+                    Debug.LogWarning("[Discord] Couldn't clear activity!");
+                }
+            });
         }
     }
 
