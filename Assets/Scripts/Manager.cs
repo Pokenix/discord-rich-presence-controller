@@ -18,15 +18,24 @@ public class Manager : MonoBehaviour
     public GameObject button_connect;
     public GameObject menu;
     public GameObject menu_basic;
+    public GameObject menu_times;
     public GameObject menu_images;
     public GameObject menu_buttons;
+
+    public GameObject profileID;
+
+    public bool autoUpdateEnabled = false;
+    public long autoUpdateNextTime;
+    public long autoUpdateNext;
 
     public GameObject id;
     public GameObject details;
     public GameObject state;
+    public GameObject instance;
+    public GameObject autoUpdateTime;
+    public GameObject autoUpdate;
     public GameObject timeStart;
     public GameObject timeEnd;
-    public GameObject instance;
     public GameObject largeKey;
     public GameObject largeText;
     public GameObject smallKey;
@@ -56,16 +65,25 @@ public class Manager : MonoBehaviour
         {
             case 0:
                 menu_basic.SetActive(true);
+                menu_times.SetActive(false);
                 menu_images.SetActive(false);
                 menu_buttons.SetActive(false);
                 break;
             case 1:
                 menu_basic.SetActive(false);
-                menu_images.SetActive(true);
+                menu_times.SetActive(true);
+                menu_images.SetActive(false);
                 menu_buttons.SetActive(false);
                 break;
             case 2:
                 menu_basic.SetActive(false);
+                menu_times.SetActive(false);
+                menu_images.SetActive(true);
+                menu_buttons.SetActive(false);
+                break;
+            case 3:
+                menu_basic.SetActive(false);
+                menu_times.SetActive(false);
                 menu_images.SetActive(false);
                 menu_buttons.SetActive(true);
                 break;
@@ -90,11 +108,11 @@ public class Manager : MonoBehaviour
         var activity = new Activity { };
         if (details.GetComponent<TMP_InputField>().text.Length > 0)
         {
-            activity.Details = details.GetComponent<TMP_InputField>().text;
+            activity.Details = details.GetComponent<TMP_InputField>().text.Replace("{time}", DateTime.Now.ToString("HH:mm"));
         }
         if (state.GetComponent<TMP_InputField>().text.Length > 0)
         {
-            activity.State = state.GetComponent<TMP_InputField>().text;
+            activity.State = state.GetComponent<TMP_InputField>().text.Replace("{time}", DateTime.Now.ToString("HH:mm"));
         }
         if (timeStart.GetComponent<TMP_InputField>().text.Length > 0)
         {
@@ -129,5 +147,123 @@ public class Manager : MonoBehaviour
             activity.Assets.SmallText = smallText.GetComponent<TMP_InputField>().text;
         }
         discordController.UpdateActivity(activity);
+    }
+
+    private void Update()
+    {
+        if (autoUpdateEnabled)
+        {
+            long now = DateTimeOffset.Now.ToUnixTimeSeconds();
+            long next = autoUpdateNext;
+            if (now >= next)
+            {
+                UpdateActivity();
+                autoUpdateNext = DateTimeOffset.Now.AddSeconds(autoUpdateNextTime).ToUnixTimeSeconds();
+            }
+        }
+    }
+
+    public void ToggleAutoUpdate()
+    {
+        if (autoUpdate.GetComponent<Toggle>().isOn)
+        {
+            long timeNext = 60;
+            if (autoUpdateTime.GetComponent<TMP_InputField>().text.Length > 0)
+            {
+                timeNext = long.Parse(autoUpdateTime.GetComponent<TMP_InputField>().text);
+            }
+            autoUpdateNext = timeNext;
+            autoUpdateNextTime = timeNext;
+            autoUpdateEnabled = true;
+        }
+        else
+        {
+            autoUpdateEnabled = false;
+            autoUpdateNext = 0;
+        }
+    }
+
+    public void SaveProfile()
+    {
+        string profile;
+        if (profileID.GetComponent<TMP_InputField>().text.Length > 0) profile = profileID.GetComponent<TMP_InputField>().text; else profile = "0";
+        if (id.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-id", id.GetComponent<TMP_InputField>().text);
+        }
+        if (details.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-details", details.GetComponent<TMP_InputField>().text);
+        }
+        if (state.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-state", state.GetComponent<TMP_InputField>().text);
+        }
+        if (instance.GetComponent<Toggle>().isOn) PlayerPrefs.SetInt($"{profile}-instance", 1); else PlayerPrefs.SetInt($"{profile}-instance", 0);
+        if (autoUpdateTime.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-autoUpdateTime", autoUpdateTime.GetComponent<TMP_InputField>().text);
+        }
+        if (autoUpdate.GetComponent<Toggle>().isOn) PlayerPrefs.SetInt($"{profile}-autoUpdate", 1); else PlayerPrefs.SetInt($"{profile}-autoUpdate", 0);
+        if (timeStart.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-timeStart", timeStart.GetComponent<TMP_InputField>().text);
+        }
+        if (timeEnd.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-timeEnd", timeEnd.GetComponent<TMP_InputField>().text);
+        }
+        if (largeKey.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-largeKey", largeKey.GetComponent<TMP_InputField>().text);
+        }
+        if (largeText.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-largeText", largeText.GetComponent<TMP_InputField>().text);
+        }
+        if (smallKey.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-smallKey", smallKey.GetComponent<TMP_InputField>().text);
+        }
+        if (smallText.GetComponent<TMP_InputField>().text.Length > 0)
+        {
+            PlayerPrefs.SetString($"{profile}-smallText", smallText.GetComponent<TMP_InputField>().text);
+        }
+        PlayerPrefs.Save();
+    }
+
+    public void LoadProfile()
+    {
+        string profile;
+        if (profileID.GetComponent<TMP_InputField>().text.Length > 0) profile = profileID.GetComponent<TMP_InputField>().text; else profile = "0";
+        id.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-id");
+        details.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-details");
+        state.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-state");
+        if (PlayerPrefs.GetInt($"{profile}-instance") == 1) instance.GetComponent<Toggle>().isOn = true; else instance.GetComponent<Toggle>().isOn = false;
+        autoUpdateTime.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-autoUpdateTime");
+        if (PlayerPrefs.GetInt($"{profile}-autoUpdate") == 1) autoUpdate.GetComponent<Toggle>().isOn = true; else autoUpdate.GetComponent<Toggle>().isOn = false;
+        timeStart.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-timeStart");
+        timeEnd.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-timeEnd");
+        largeKey.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-largeKey");
+        largeText.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-largeText");
+        smallKey.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-smallKey");
+        smallText.GetComponent<TMP_InputField>().text = PlayerPrefs.GetString($"{profile}-smallText");
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    public void ChangeScreenMode()
+    {
+        if (Screen.fullScreenMode == FullScreenMode.Windowed)
+        {
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+        }
     }
 }
