@@ -151,6 +151,27 @@ public class Manager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape)) Quit();
+        if (Input.GetKeyDown(KeyCode.F1)) SaveProfile();
+        if (Input.GetKeyDown(KeyCode.F2)) LoadProfile();
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            id.GetComponent<TMP_InputField>().text = "";
+            details.GetComponent<TMP_InputField>().text = "";
+            state.GetComponent<TMP_InputField>().text = "";
+            instance.GetComponent<Toggle>().isOn = false;
+            autoUpdateTime.GetComponent<TMP_InputField>().text = "";
+            autoUpdate.GetComponent<Toggle>().isOn = false;
+            timeStart.GetComponent<TMP_InputField>().text = "";
+            timeEnd.GetComponent<TMP_InputField>().text = "";
+            largeKey.GetComponent<TMP_InputField>().text = "";
+            largeText.GetComponent<TMP_InputField>().text = "";
+            smallKey.GetComponent<TMP_InputField>().text = "";
+            smallText.GetComponent<TMP_InputField>().text = "";
+        }
+        if (Input.GetKeyDown(KeyCode.F8)) OpenURL("https://youtu.be/dQw4w9WgXcQ");
+        if (Input.GetKeyDown(KeyCode.F11)) ChangeScreenMode();
+        if (Input.GetKeyDown(KeyCode.Home)) OpenURL("https://www.pokenix.com/discord-rich-presence-controller");
         if (autoUpdateEnabled)
         {
             long now = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -187,48 +208,18 @@ public class Manager : MonoBehaviour
     {
         string profile;
         if (profileID.GetComponent<TMP_InputField>().text.Length > 0) profile = profileID.GetComponent<TMP_InputField>().text; else profile = "0";
-        if (id.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-id", id.GetComponent<TMP_InputField>().text);
-        }
-        if (details.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-details", details.GetComponent<TMP_InputField>().text);
-        }
-        if (state.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-state", state.GetComponent<TMP_InputField>().text);
-        }
+        PlayerPrefs.SetString($"{profile}-id", id.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-details", details.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-state", state.GetComponent<TMP_InputField>().text);
         if (instance.GetComponent<Toggle>().isOn) PlayerPrefs.SetInt($"{profile}-instance", 1); else PlayerPrefs.SetInt($"{profile}-instance", 0);
-        if (autoUpdateTime.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-autoUpdateTime", autoUpdateTime.GetComponent<TMP_InputField>().text);
-        }
+        PlayerPrefs.SetString($"{profile}-autoUpdateTime", autoUpdateTime.GetComponent<TMP_InputField>().text);
         if (autoUpdate.GetComponent<Toggle>().isOn) PlayerPrefs.SetInt($"{profile}-autoUpdate", 1); else PlayerPrefs.SetInt($"{profile}-autoUpdate", 0);
-        if (timeStart.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-timeStart", timeStart.GetComponent<TMP_InputField>().text);
-        }
-        if (timeEnd.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-timeEnd", timeEnd.GetComponent<TMP_InputField>().text);
-        }
-        if (largeKey.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-largeKey", largeKey.GetComponent<TMP_InputField>().text);
-        }
-        if (largeText.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-largeText", largeText.GetComponent<TMP_InputField>().text);
-        }
-        if (smallKey.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-smallKey", smallKey.GetComponent<TMP_InputField>().text);
-        }
-        if (smallText.GetComponent<TMP_InputField>().text.Length > 0)
-        {
-            PlayerPrefs.SetString($"{profile}-smallText", smallText.GetComponent<TMP_InputField>().text);
-        }
+        PlayerPrefs.SetString($"{profile}-timeStart", timeStart.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-timeEnd", timeEnd.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-largeKey", largeKey.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-largeText", largeText.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-smallKey", smallKey.GetComponent<TMP_InputField>().text);
+        PlayerPrefs.SetString($"{profile}-smallText", smallText.GetComponent<TMP_InputField>().text);
         PlayerPrefs.Save();
     }
 
